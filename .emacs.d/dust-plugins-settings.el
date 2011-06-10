@@ -1,4 +1,5 @@
-﻿;;; Load "color theme"
+﻿(add-to-list 'load-path "~/.emacs.d/plug-in")
+;;; Load "color theme"
 ;(add-to-list 'load-path "./color-theme")
 ;(require 'color-theme)
 ;(color-theme-initialize)
@@ -65,6 +66,6 @@
 (add-hook 'after-init-hook 'session-initialize)
 
 ;;; Load desktop.el
-(load "desktop")
+(require 'desktop)
 (desktop-load-default)
 (desktop-read)
