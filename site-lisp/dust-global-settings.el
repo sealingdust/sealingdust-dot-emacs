@@ -16,7 +16,7 @@
 (setq inhibit-startup-message t)
 
 ;;show the column number
-(setq column-number-mode t)
+;(setq column-number-mode t)
 
 ;;Don't insert content in plate at point mouse clicked
 (setq mouse-yank-at-point t)
