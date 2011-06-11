@@ -1,5 +1,14 @@
 ;;Set front
-(set-default-font "-outline-Consolas-normal-normal-normal-mono-16-*-*-*-c-*-iso8859-1")
+;(set-default-font "-outline-Consolas-normal-normal-normal-mono-16-*-*-*-c-*-iso8859-1")
+;; Setting English Font
+(set-face-attribute
+  'default nil :font "Consolas 12")
+ 
+;; Chinese Font
+(dolist (charset '(kana han symbol cjk-misc bopomofo))
+    (set-fontset-font (frame-parameter nil 'font)
+                      charset
+                      (font-spec :family "Microsoft Yahei" :size 14)))
 
 ;; hide menu bar
 (menu-bar-mode nil)
@@ -25,7 +34,7 @@
 (setq kill-ring-max 200)
 
 ;;set fill-column to 60
-(setq default-fill-column 70)
+(setq default-fill-column 80)
 
 
 ;中文

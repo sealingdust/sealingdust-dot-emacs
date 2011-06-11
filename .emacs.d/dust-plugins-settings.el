@@ -1,4 +1,10 @@
 ﻿(add-to-list 'load-path "~/.emacs.d/plug-in")
+
+;; solve the coding system
+;; auto recognize coding
+(require 'unicad)
+;; seen not used
+
 ;;; Load "color theme"
 ;(add-to-list 'load-path "./color-theme")
 ;(require 'color-theme)
@@ -12,7 +18,7 @@
 ;;;
 (require 'tabbar)
 (tabbar-mode)
-;(require 'tabbar-ruler)
+
 (define-prefix-command 'lwindow-map)
 (global-set-key (kbd "<M-up>") 'tabbar-backward-group)
 (global-set-key (kbd "<M-down>") 'tabbar-forward-group)
@@ -42,6 +48,7 @@
  '(tabbar-separator ((t (:inherit tabbar-default :weight normal :width normal))))
  '(tabbar-unselected ((t (:inherit tabbar-default :box (:line-width 1 :color "gray25"))))))
 
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Load "browse-kill-ring.el"
 ;;;
@@ -61,13 +68,6 @@
 ;(add-hook 'find-file-hooks (lambda()(linum-mode nil)))
 ;(global-linum-mode 0)
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;
-;;Require auto-complete as my complete engine
-(add-to-list 'load-path "~/.emacs.d/plug-in/auto-complete")
-(require 'auto-complete-config)
-(add-to-list 'ac-dictionary-directories "~/.emacs.d/plug-in/auto-complete/ac-dict")
-(ac-config-default)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
@@ -80,6 +80,38 @@
 ;; recombine the trigger-key to Ctrl-Tab, default is "TAB"
 (setq yas/trigger-key "<C-tab>")
 ;(setq yas/prompt-functions 'yas/dropdown-prompt)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;
+;;Require auto-complete as my complete engine
+(add-to-list 'load-path "~/.emacs.d/plug-in/auto-complete")
+(require 'auto-complete-config)
+(ac-config-default)
+(add-to-list 'ac-dictionary-directories "~/.emacs.d/plug-in/auto-complete/ac-dict")
+;; automatic starting completion if type more than 4 words
+;; set it to "nil" will disable automatic starting completion
+(setq ac-auto-start 4)
+;; bind trigger key
+(define-key ac-mode-map (kbd "TAB") 'auto-complete)
+;; turn-on ac-use-menu-map, default use
+;; "C-n" "C-p" to select candidades
+(setq ac-use-menu-map t)
+;(define-key ac-completing-map "\M-/" 'ac-stop)
+
+;; Some small adjust
+;; not use quick help of ac-complete
+(setq ac-use-quick-help nil)
+;; change height of completion menu
+(setq ac-menu-height 20)
+;; set default of sources
+(setq-default ac-sources '(ac-source-semantic
+                           ac-source-yasnippet
+                           ac-source-words-in-buffer
+                           ac-source-words-in-all-buffer
+                           ac-source-words-in-same-mode-buffers
+                           ac-source-files-in-current-dir
+                           ac-source-dictionary
+                           ac-source-filename))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
@@ -108,7 +140,7 @@
   (define-key c-mode-base-map [(f7)] 'compile)
   '(compile-command "make")
   (define-key c-mode-base-map [(meta \`)] 'c-indent-command)
-  ;(define-key c-mode-base-map [(tab)] 'hippie-expand)
+  (define-key c-mode-base-map [(tab)] 'auto-complete)
   ;(define-key c-mode-base-map [(tab)] 'my-indent-or-complete)
   (define-key c-mode-base-map [(meta ?/)] 'semantic-ia-complete-symbol-menu)
   (define-key c-mode-base-map [(control c)(h)] 'my-insert-cpp-header)
@@ -121,15 +153,13 @@
   ;(setq hs-minor-mode t)
   ;(setq abbrev-mode t)
   (setq default-fill-column 80)
-
-  ;;Turn on the line number
-  (setnu-mode t)
 )
 (add-hook 'c-mode-common-hook 'my-c-mode-common-hook)
 
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
-;;Require CEDET
+;;Configure CEDET
 (require 'cedet)
 ;; turn on semantic function
 (setq semantic-default-submodes '(global-semantic-idle-scheduler-mode
