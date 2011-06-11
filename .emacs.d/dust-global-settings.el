@@ -73,7 +73,7 @@
 ;;set the version control when do the copy
 ;;much safer
 ;;put all backupfile in a directory
-(setq backup-directory-alist (quote (("." . "e:/mydocs/emacsbackups"))))
+(setq backup-directory-alist (quote (("." . "~/.emacs.d/auto-save-list"))))
 ;(setq back-directory-alist '(("." . "e:/mydocs/emacsbackups")))
 (setq version-control t)
 (setq kept-old-versions 2)    ;the default is actually 2
