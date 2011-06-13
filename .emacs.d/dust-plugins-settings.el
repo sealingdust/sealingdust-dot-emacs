@@ -88,6 +88,7 @@
 (require 'auto-complete-config)
 (ac-config-default)
 (add-to-list 'ac-dictionary-directories "~/.emacs.d/plug-in/auto-complete/ac-dict")
+(setq global-auto-complete-mode t)
 ;; automatic starting completion if type more than 4 words
 ;; set it to "nil" will disable automatic starting completion
 (setq ac-auto-start 4)
@@ -97,6 +98,9 @@
 ;; "C-n" "C-p" to select candidades
 (setq ac-use-menu-map t)
 ;(define-key ac-completing-map "\M-/" 'ac-stop)
+
+;; global set key "TAB" as auto-complete
+(global-set-key (kbd "TAB") 'auto-complete)
 
 ;; Some small adjust
 ;; not use quick help of ac-complete
@@ -203,6 +207,23 @@
 ;; Enable visual high-light bookmarks in CEDET
 ; Not available in build-in CEDET
 ;(enable-visual-studio-bookmarks)
+
+;; Use easy Matlab mode, just edit matlab files in emacs
+(autoload 'matlab-mode "matlab" "Enter MATLAB mode." t)
+(setq auto-mode-alist (cons '("\\.m\\'" . matlab-mode) auto-mode-alist))
+;User Level customizations (You need not use them all):
+(setq matlab-indent-function-body t)  ; if you want function bodies indented
+(setq matlab-verify-on-save-flag nil) ; turn off auto-verify on save
+(defun my-matlab-mode-hook ()
+    (setq fill-column 76)x		; where auto-fill should wrap
+    (auto-complete-mode)  ;; seem not used? /TODO:
+    ;(define-key matlab-mode-base-map [(tab)] 'auto-complete)
+)
+(add-hook 'matlab-mode-hook 'my-matlab-mode-hook)
+;(defun my-matlab-shell-mode-hook ()
+;	'())
+;(add-hook 'matlab-shell-mode-hook 'my-matlab-shell-mode-hook)(autoload 'matlab-shell "matlab" "Interactive MATLAB mode." t)
+
 
 ;;; Load session.el
 (require 'session)
