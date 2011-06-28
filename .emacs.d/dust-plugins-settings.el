@@ -94,10 +94,12 @@
 (setq ac-auto-start 4)
 ;; bind trigger key
 (define-key ac-mode-map (kbd "TAB") 'auto-complete)
+
+;(define-key ac-completing-map "\r" 'ac-complete)
 ;; turn-on ac-use-menu-map, default use
 ;; "C-n" "C-p" to select candidades
 (setq ac-use-menu-map t)
-;(define-key ac-completing-map "\M-/" 'ac-stop)
+(define-key ac-completing-map "\M-/" 'ac-stop)
 
 ;; global set key "TAB" as auto-complete
 (global-set-key (kbd "TAB") 'auto-complete)
@@ -121,31 +123,31 @@
 ;;
 ;;Require CC-mode
 (require 'cc-mode)
-;(c-set-offset 'inline-open nil)
-;(c-set-offset 'friend '-)
-;(c-set-offset 'substatement-open 0)
+					;(c-set-offset 'inline-open nil)
+					;(c-set-offset 'friend '-)
+					;(c-set-offset 'substatement-open 0)
 
 ;;Set mode hook
 ;;;C/C++ edit resolve
 (defun my-c-mode-common-hook()
   (c-set-style "stroustrup")  ;;set C code style
- ; (c-set-style "k&r")
+					; (c-set-style "k&r")
   (setq tab-width 4 indent-tabs-mode nil)
   ;;; hungry-delete and auto-newline
-;  (c-toggle-auto-hungry-state 1)
+					;  (c-toggle-auto-hungry-state 1)
   ;;Only auto-newline but no hungry delete
-  ;(c-toggle-auto-newline 1)
+					;(c-toggle-auto-newline 1)
   ;;; auto-newline and auto filling
-;  (c-setup-filladapt)
-;  (filladapt-mode 1)
+					;  (c-setup-filladapt)
+					;  (filladapt-mode 1)
   ;;key definition
   (define-key c-mode-base-map [(control \`)] 'hs-toggle-hiding)
   (define-key c-mode-base-map [(return)] 'newline-and-indent)
   (define-key c-mode-base-map [(f7)] 'compile)
   '(compile-command "make")
   (define-key c-mode-base-map [(meta \`)] 'c-indent-command)
-  ;(define-key c-mode-base-map [(tab)] 'auto-complete)
-  ;(define-key c-mode-base-map [(tab)] 'my-indent-or-complete)
+					;(define-key c-mode-base-map [(tab)] 'auto-complete)
+					;(define-key c-mode-base-map [(tab)] 'my-indent-or-complete)
   (define-key c-mode-base-map [(meta ?/)] 'semantic-ia-complete-symbol-menu)
   (define-key c-mode-base-map [(control c)(h)] 'my-insert-cpp-header)
   (define-key c-mode-base-map [(control c)(u)] 'uncomment-region)
@@ -154,10 +156,10 @@
   (setq c-macro-preprocessor "cpp")
   (setq c-macro-cppflags " ")
   (setq c-macro-prompt-flag t)
-  ;(setq hs-minor-mode t)
-  ;(setq abbrev-mode t)
+					;(setq hs-minor-mode t)
+					;(setq abbrev-mode t)
   (setq default-fill-column 80)
-)
+  )
 (add-hook 'c-mode-common-hook 'my-c-mode-common-hook)
 
 
@@ -215,14 +217,65 @@
 (setq matlab-indent-function-body t)  ; if you want function bodies indented
 (setq matlab-verify-on-save-flag nil) ; turn off auto-verify on save
 (defun my-matlab-mode-hook ()
-    (setq fill-column 76)x		; where auto-fill should wrap
-    (auto-complete-mode)  ;; seem not used? /TODO:
+    (setq fill-column 76)		; where auto-fill should wrap
+    (add-to-list 'ac-modes 'matlab-mode) ;; add to auto-complete support list
     ;(define-key matlab-mode-base-map [(tab)] 'auto-complete)
 )
 (add-hook 'matlab-mode-hook 'my-matlab-mode-hook)
 ;(defun my-matlab-shell-mode-hook ()
 ;	'())
 ;(add-hook 'matlab-shell-mode-hook 'my-matlab-shell-mode-hook)(autoload 'matlab-shell "matlab" "Interactive MATLAB mode." t)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;
+;; Load AucTex to edit Latex files
+
+;; if use a pre-compiled version, need add to path
+;; other-wise, the default path of "auctex.el" is in dir "site-lisp"
+;(add-to-list 'load-path 
+;             "~/.emacs.d/plug-in/auctex/site-lisp/site-start.d")
+(load "auctex.el" nil t t)
+;(load "preview-latex.el" nil t t)
+;; default to use mik make configuration in windows easier
+;(if (string-equal system-type "windows-nt")
+    (require 'tex-mik) 
+    (require 'tex-site)
+;)
+
+
+(defun my-LaTeX-mode-hook ()
+   (setq TeX-auto-untabify t)     ; remove all tabs before saving
+   (setq TeX-auto-save t)         ; turn on auto save and auto parse
+   (setq TeX-parse-self t)
+   (setq TeX-show-compilation t)  ; display compilation in another window
+   (setq fill-column 80)
+   (turn-on-auto-fill)     ; enable auto-fill-mode
+   (turn-on-reftex)         
+   (LaTeX-math-mode t)     ; enable math-mode
+   (TeX-fold-mode t)       ; enable TeX-fold-mode
+   (TeX-global-PDF-mode t) ; PDF mode enable, use pdflatex
+   ;; use acrobat to preview the pdf file, it noly works this way
+   (setq TeX-output-view-style
+       (cons '("^pdf$" "." "acrobat [DocOpen("%o")]") TeX-output-view-style))
+   ;; the following command not work yet
+;   (setq TeX-view-program-list 
+;         '(("Acrobat" "acrobat %o")
+;           ("AcroReader" "acroread %o")
+;           ("Gsview" "gsview32.exe %o")))
+;   (setq TeX-view-program-selection 
+;         '((output-pdf "Acrobat") 
+;           (output-dvi "Yap")))  ;; Yap is in TeX-view-program-list-builtin
+   
+)
+(add-hook 'LaTeX-mode-hook 'my-LaTeX-mode-hook)
+;                  ;TeX-engine 'xetex       ; use xelatex default
+;                  Tex-command-default "pdflatex"
+;            ;(setq-default TeX-master nil) ;; if always use multi-file, set this
+;            (TeX-global-PDF-mode t)       ; PDF mode enable, not plain
+;            (setq TeX-save-query nil)
+            ;(imenu-add-menubar-index)  ;; no menu
+            ;; I use TAB as auto-complete
+            ;(define-key LaTeX-mode-map (kbd "TAB") 'TeX-complete-symbol)
 
 
 ;;; Load session.el
