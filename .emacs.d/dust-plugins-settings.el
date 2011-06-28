@@ -144,7 +144,7 @@
   (define-key c-mode-base-map [(f7)] 'compile)
   '(compile-command "make")
   (define-key c-mode-base-map [(meta \`)] 'c-indent-command)
-  (define-key c-mode-base-map [(tab)] 'auto-complete)
+  ;(define-key c-mode-base-map [(tab)] 'auto-complete)
   ;(define-key c-mode-base-map [(tab)] 'my-indent-or-complete)
   (define-key c-mode-base-map [(meta ?/)] 'semantic-ia-complete-symbol-menu)
   (define-key c-mode-base-map [(control c)(h)] 'my-insert-cpp-header)
