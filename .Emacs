@@ -1,10 +1,10 @@
 (add-to-list 'load-path "~/.emacs.d")
 ;; load the golobal-settings.el where the 
-(load "dst-global-settings.el")
+(load "sdt-global-settings.el")
 
 ;; Require my plugins.el
-(load "dst-plugins-settings.el")
+(load "sdt-plugins-settings.el")
 
 ;; Require key bindings
-(load "dst-key-bindings.el")
+(load "sdt-key-bindings.el")
 
