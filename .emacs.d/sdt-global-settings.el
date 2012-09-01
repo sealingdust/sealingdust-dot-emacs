@@ -10,12 +10,6 @@
                       charset
                       (font-spec :family "Microsoft Yahei" :size 14)))
 
-;; hide menu bar
-(menu-bar-mode nil)
-
-;; hide scroll bar
-(scroll-bar-mode nil)
-
 ;;shut down the ring when error comes
 (setq visible-bell t)
 
@@ -104,6 +98,8 @@
    ("\\.rdf$".  sgml-mode)
    ("\\.session" . emacs-lisp-mode)
    ("\\.l$" . cc-mode)
+   ("\\.h$" . c++-mode)
+   ("\\.tpp" . c++-mode)
    ("\\.css$" . css-mode)
    ("\\.cfm$" . html-mode)
    ("gnus" . emacs-lisp-mode)
@@ -130,7 +126,7 @@
 ;;remove the toolbar,the command following is not quite
 ;true, and I tried it out the same as hide the munubar
 ;(set-specifier default-toolbar-visible-p nil) 
-(tool-bar-mode nil)
+;(tool-bar-mode nil)
 
 ;;When I'm at the end of the buffer, I still want to go to
 ;;the next line, I choose to add a new blank line at the end

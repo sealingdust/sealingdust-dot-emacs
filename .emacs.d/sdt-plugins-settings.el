@@ -6,12 +6,13 @@
 ;; seen not used
 
 ;;; Load "color theme"
-;(add-to-list 'load-path "./color-theme")
-;(require 'color-theme)
-;(color-theme-initialize)
+(add-to-list 'custom-theme-load-path "~/.emacs.d/plug-in/themes/")
+(require 'color-theme)
+(color-theme-initialize)
 ;(color-theme-pok-wog)
-(require 'color-theme-zenburn)
-(color-theme-zenburn)
+;(require 'color-theme-zenburn)
+;(color-theme-zenburn)
+(load-theme 'zenburn t)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;Load "tabbar.el"
@@ -26,7 +27,6 @@
 (global-set-key (kbd "<M-right>") 'tabbar-forward)
 ;;now I changed key "s-up" to "M-up", so it works. I hope this will not 
 ;;lead to confiliction
-;; DOTO: Configure more on tabbar
 (custom-set-variables
   ;; custom-set-variables was added by Custom.
   ;; If you edit it by hand, you could mess it up, so be careful.
@@ -47,7 +47,6 @@
  '(tabbar-selected ((t (:inherit tabbar-default :foreground "#93e0e2"))))
  '(tabbar-separator ((t (:inherit tabbar-default :weight normal :width normal))))
  '(tabbar-unselected ((t (:inherit tabbar-default :box (:line-width 1 :color "gray25"))))))
-
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Load "browse-kill-ring.el"
@@ -166,32 +165,43 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
 ;;Configure CEDET
-(require 'cedet)
-;; turn on semantic function
-(setq semantic-default-submodes '(global-semantic-idle-scheduler-mode
-                                  global-semanticdb-minor-mode
-                                  global-semantic-idle-summary-mode
-                                  global-semantic-mru-bookmark-mode))
-(semantic-mode 1)
+;(add-to-list 'load-path "~/.emacs.d/plug-in/cedet/")
+(load-file  "~/.emacs.d/plug-in/cedet/common/cedet.el")
+
+
+
+;; turn on semantic function, for build-in CEDET
+;(setq semantic-default-submodes '(global-semantic-idle-scheduler-mode
+;                                  global-semanticdb-minor-mode
+;                                  global-semantic-idle-summary-mode
+;                                  global-semantic-mru-bookmark-mode))
+;(semantic-mode 1)
+
+
 ;; if use official CEDET, not build-in one, use the following 
 ;; 
-;(semantic-load-enable-minimum-features)
-;;(semantic-load-enable-code-helpers)
-;;(semantic-load-enable-guady-code-helpers)
-;;(semantic-load-enable-excessive-code-helpers)
-;(semantic-load-enable-semantic-debugging-helpers)
+(semantic-load-enable-minimum-features)
+(semantic-load-enable-code-helpers)
+;(semantic-load-enable-guady-code-helpers)
+;(semantic-load-enable-excessive-code-helpers)
+(semantic-load-enable-semantic-debugging-helpers)
+;; Enable SRecode (Template management) minor-mode.
+;(global-srecode-minor-mode 1)
 
 ;; (setq semanticdb-project-roots (list (expand-file-name "/")))
 (defconst cedet-user-include-dirs
   (list ".." "../include" "../inc" "../common" "../public"
         "../.." "../../include" "../../inc" "../../common" "../../public"))
 (defconst cedet-win32-include-dirs
-  (list "D:/MinGW/include"
-        "D:/MinGW/include/gdiplus"
-        "D:/MinGW/include/GL"
-        "D:/MinGW/include/sys"
-        "D:/MinGW/ddk"
-        "D:/MinGW/lib/gcc/mingw32/4.5.0/include"))
+  (list  "D:/Program Files/Microsoft Visual Studio 9.0/VC/include"
+         "D:/Devlibs/opencv/build/include"
+;        "D:/MinGW/include"
+;        "D:/MinGW/include/gdiplus"
+;        "D:/MinGW/include/GL"
+;        "D:/MinGW/include/sys"
+;        "D:/MinGW/ddk"
+;        "D:/MinGW/lib/gcc/mingw32/4.5.0/include"
+  ))
 (require 'semantic-c nil 'noerror)
 (let ((include-dirs cedet-user-include-dirs))
   (when (eq system-type 'windows-nt)
@@ -204,11 +214,33 @@
 ;; Code jump setting
 ;; Key binding
 (global-set-key [f12] 'semantic-ia-fast-jump)
-(define-key c-mode-base-map [S-f12] 'semantic-analyze-proto-impl-toggle)
+(global-set-key [S-f12]
+                (lambda ()
+                  (interactive)
+                  (if (ring-empty-p (oref semantic-mru-bookmark-ring ring))
+                      (error "Semantic Bookmark ring is currently empty"))
+                  (let* ((ring (oref semantic-mru-bookmark-ring ring))
+                         (alist (semantic-mrub-ring-to-assoc-list ring))
+                         (first (cdr (car alist))))
+                    (if (semantic-equivalent-tag-p (oref first tag)
+                                                   (semantic-current-tag))
+                        (setq first (cdr (car (cdr alist)))))
+                    (semantic-mrub-switch-tags first))))
+; previous function will fail and report error in emcas
+; require this to fix this problem
+;(require 'semantic/analyze/refs)
+(define-key c-mode-base-map [M-S-f12] 'semantic-analyze-proto-impl-toggle)
+; TODO: This function seems not work properly
+
+;; Enable global ede(emacs development environment)
+(global-ede-mode t)
 
 ;; Enable visual high-light bookmarks in CEDET
 ; Not available in build-in CEDET
 ;(enable-visual-studio-bookmarks)
+
+
+
 
 ;; Use easy Matlab mode, just edit matlab files in emacs
 (autoload 'matlab-mode "matlab" "Enter MATLAB mode." t)
@@ -232,15 +264,15 @@
 
 ;; if use a pre-compiled version, need add to path
 ;; other-wise, the default path of "auctex.el" is in dir "site-lisp"
-;(add-to-list 'load-path 
-;             "~/.emacs.d/plug-in/auctex/site-lisp/site-start.d")
-(load "auctex.el" nil t t)
+(add-to-list 'load-path 
+             "~/.emacs.d/elpa/auctex-11.86/")
+(load "auctex-autoloads.el" nil t t)
 ;(load "preview-latex.el" nil t t)
 ;; default to use mik make configuration in windows easier
-;(if (string-equal system-type "windows-nt")
+(if (string-equal system-type "windows-nt")
     (require 'tex-mik) 
     (require 'tex-site)
-;)
+)
 
 
 (defun my-LaTeX-mode-hook ()
@@ -248,24 +280,29 @@
    (setq TeX-auto-save t)         ; turn on auto save and auto parse
    (setq TeX-parse-self t)
    (setq TeX-show-compilation t)  ; display compilation in another window
-   (setq fill-column 80)
-   (turn-on-auto-fill)     ; enable auto-fill-mode
+;   (setq fill-column 80)
+;   (turn-on-auto-fill)     ; enable auto-fill-mode
    (turn-on-reftex)         
-   (LaTeX-math-mode t)     ; enable math-mode
-   (TeX-fold-mode t)       ; enable TeX-fold-mode
-   (TeX-global-PDF-mode t) ; PDF mode enable, use pdflatex
+;   (LaTeX-math-mode t)     ; enable math-mode
+;   (TeX-fold-mode t)       ; enable TeX-fold-mode
+;   (TeX-global-PDF-mode t) ; PDF mode enable, use pdflatex
    ;; use acrobat to preview the pdf file, it noly works this way
    (setq TeX-output-view-style
        (cons '("^pdf$" "." "acrobat [DocOpen("%o")]") TeX-output-view-style))
+   (add-to-list 'TeX-command-list
+       '("PDF" "dvipdfmx %s.dvi" TeX-run-command nil t :help "Run dvipdfmx to convert the CJK dvi file") t)
+;   (add-to-list 'TeX-command-list
+;        '("PdfView" "acrobat %s.pdf" TeX-run-command t t :help "View pdf file using acroread") t)  ; Not work yet
    ;; the following command not work yet
 ;   (setq TeX-view-program-list 
-;         '(("Acrobat" "acrobat %o")
+;         '(("Acrobat" "acrobat %o"))
 ;           ("AcroReader" "acroread %o")
-;           ("Gsview" "gsview32.exe %o")))
+;           ("Gsview" "gsview32.exe %o"))
+;   )
 ;   (setq TeX-view-program-selection 
-;         '((output-pdf "Acrobat") 
-;           (output-dvi "Yap")))  ;; Yap is in TeX-view-program-list-builtin
-   
+;         '((output-pdf "Acrobat")) 
+;           (output-dvi "Yap"))  ;; Yap is in TeX-view-program-list-builtin  
+;   )
 )
 (add-hook 'LaTeX-mode-hook 'my-LaTeX-mode-hook)
 ;                  ;TeX-engine 'xetex       ; use xelatex default
